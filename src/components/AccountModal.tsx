@@ -15,6 +15,7 @@ import {
 import { ExternalLinkIcon, CopyIcon } from "@chakra-ui/icons";
 import { useEthers } from "@usedapp/core";
 import Identicon from "./Identicon";
+import { getEtherScanUrl } from '../utils';
 
 type Props = {
   isOpen: any;
@@ -24,29 +25,12 @@ type Props = {
 export default function AccountModal({ isOpen, onClose }: Props) {
   const { account, deactivate, chainId } = useEthers();
 
+  const scanUrl = getEtherScanUrl(chainId);
+  
   function handleDeactivateAccount() {
     deactivate();
     onClose();
   }
-
-  const getScanUrl = (_chainId: number | undefined) => {
-    if (_chainId) {
-      if (_chainId == 1) {
-        return 'https://etherscan.io/address/';
-      } else if (_chainId == 3) {
-        return 'https://ropsten.etherscan.io/address/';
-      } else if (_chainId == 4) {
-        return 'https://rinkeby.etherscan.io/address/';
-      } else if (_chainId == 5) {
-        return 'https://goerli.etherscan.io/address/';
-      } else if (_chainId == 42) {
-        return 'https://kovan.etherscan.io/address/';
-      }
-    }
-    return '';
-  }
-
-  const scanUrl = getScanUrl(chainId);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered size="md">

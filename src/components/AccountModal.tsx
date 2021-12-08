@@ -22,12 +22,31 @@ type Props = {
 }
 
 export default function AccountModal({ isOpen, onClose }: Props) {
-  const { account, deactivate } = useEthers();
+  const { account, deactivate, chainId } = useEthers();
 
   function handleDeactivateAccount() {
     deactivate();
     onClose();
   }
+
+  const getScanUrl = (_chainId: number | undefined) => {
+    if (_chainId) {
+      if (_chainId == 1) {
+        return 'https://etherscan.io/address/';
+      } else if (_chainId == 3) {
+        return 'https://ropsten.etherscan.io/address/';
+      } else if (_chainId == 4) {
+        return 'https://rinkeby.etherscan.io/address/';
+      } else if (_chainId == 5) {
+        return 'https://goerli.etherscan.io/address/';
+      } else if (_chainId == 42) {
+        return 'https://kovan.etherscan.io/address/';
+      }
+    }
+    return '';
+  }
+
+  const scanUrl = getScanUrl(chainId);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered size="md">
@@ -115,22 +134,27 @@ export default function AccountModal({ isOpen, onClose }: Props) {
                 <CopyIcon mr={1} />
                 Copy Address
               </Button>
-              <Link
-                fontSize="sm"
-                display="flex"
-                alignItems="center"
-                href={`https://ropsten.etherscan.io/address/${account}`}
-                isExternal
-                color="gray.400"
-                ml={6}
-                _hover={{
-                  color: "whiteAlpha.800",
-                  textDecoration: "underline",
-                }}
-              >
-                <ExternalLinkIcon mr={1} />
-                View on Explorer
-              </Link>
+              {
+                scanUrl && (
+                  <Link
+                    fontSize="sm"
+                    display="flex"
+                    alignItems="center"
+                    href={`${scanUrl}/${account}`}
+                    isExternal
+                    color="gray.400"
+                    ml={6}
+                    _hover={{
+                      color: "whiteAlpha.800",
+                      textDecoration: "underline",
+                    }}
+                  >
+                    <ExternalLinkIcon mr={1} />
+                    View on Explorer
+                  </Link>
+
+                )
+              }
             </Flex>
           </Box>
         </ModalBody>
